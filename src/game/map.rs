@@ -20,4 +20,5 @@ fn setup_map(mut commands: Commands){
     commands.spawn_bundle(WallBundle::new(Vec3{x: 0., y: -350., z: 0.1}, Vec2 { x: 925., y: 25. }));
     //Top Wall
     commands.spawn_bundle(WallBundle::new(Vec3{x: 0., y: 350., z: 0.1}, Vec2 { x: 925., y: 25. }));
+
 }

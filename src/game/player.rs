@@ -136,10 +136,10 @@ fn player_input(
 }
 
 fn check_collisions(
-    mut player_query: Query<(&mut PlayerInput, &mut Grounded, &Transform), With<Player>>,
+    mut player_query: Query<(&mut PlayerInput, &mut Grounded, &mut Transform), With<Player>>,
     collider_query: Query<(Entity, &Transform, Option<&Wall>, Without<Player>), With<Collider>>,
 ) {
-    let (mut player_input, mut player_grounded, player_transform) = player_query.single_mut();
+    let (mut player_input, mut player_grounded, mut player_transform) = player_query.single_mut();
 
     let mut collision_on_bottom = false;
     //Check collisions
@@ -165,6 +165,9 @@ fn check_collisions(
                 Collision::Top => println!("Collision Top"),
                 Collision::Bottom => {
                     collision_on_bottom = true;
+                    // Bump the player up to the top of the collider to avoid sinking into it slightly.
+                    let wall_y = transform.translation.y + (transform.scale.truncate().y / 2.);
+                    player_transform.translation.y = wall_y + (player_transform.scale.truncate().y / 2.);
                 }
                 Collision::Inside => { /* do nothing */ }
             }
@@ -173,6 +176,7 @@ fn check_collisions(
     // Set grounded variable
     if collision_on_bottom {
         player_grounded.0 = true;
+        
     } else {
         player_grounded.0 = false;
     }
