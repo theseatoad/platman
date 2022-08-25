@@ -75,7 +75,7 @@ impl PlayerBundle {
 
 fn setup_player(mut commands: Commands) {
     commands
-        .spawn_bundle(PlayerBundle::new(Vec2 { x: 10., y: 10. }))
+        .spawn_bundle(PlayerBundle::new(Vec2 { x: -15., y: -300. }))
         .insert(EntityName("Player".to_string()));
 }
 
@@ -88,7 +88,6 @@ fn move_player(
 
     player_velocity.0.x = player_input.0.x * PLAYERSPEED;
 
-    println!("{:?}", player_jump_held.time.elapsed().as_secs_f32());
     if player_grounded.0 {
         if player_input.0.y > 0. {
             player_velocity.0.y = PLAYERJUMPSPEED * time.delta_seconds();
@@ -136,10 +135,10 @@ fn player_input(
 }
 
 fn check_collisions(
-    mut player_query: Query<(&mut PlayerInput, &mut Grounded, &mut Transform), With<Player>>,
+    mut player_query: Query<(&mut PlayerInput, &mut Grounded, &mut Transform, &mut Velocity), With<Player>>,
     collider_query: Query<(Entity, &Transform, Option<&Wall>, Without<Player>), With<Collider>>,
 ) {
-    let (mut player_input, mut player_grounded, mut player_transform) = player_query.single_mut();
+    let (mut player_input, mut player_grounded, mut player_transform, mut player_velocity) = player_query.single_mut();
 
     let mut collision_on_bottom = false;
     //Check collisions
@@ -162,7 +161,10 @@ fn check_collisions(
                         player_input.0.x = 0.;
                     }
                 }
-                Collision::Top => println!("Collision Top"),
+                Collision::Top => {
+                    player_velocity.0.y = 0.;
+                    player_input.0.y = 0.;
+                },
                 Collision::Bottom => {
                     collision_on_bottom = true;
                     // Bump the player up to the top of the collider to avoid sinking into it slightly.

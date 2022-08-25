@@ -9,7 +9,7 @@ pub struct WallBundle {
 }
 
 impl WallBundle {
-    pub fn new(location: Vec3, scale: Vec2) -> WallBundle {
+    pub fn new(location: Vec3) -> WallBundle {
         WallBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
@@ -19,8 +19,8 @@ impl WallBundle {
                         z: location.z,
                     },
                     scale: Vec3 {
-                        x: scale.x,
-                        y: scale.y,
+                        x: 25.,
+                        y: 25.,
                         z: 1.,
                     },
                     ..default()

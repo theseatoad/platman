@@ -1,0 +1,26 @@
+- Platman window is 960 by 768. 
+- Tiles are 25 x 25.
+- The playable area is 35 tiles x 25 tiles 
+
+
+ID KEY:
+0 = empty
+
+1 = Double Line Top Left Corner
+2 = Double Line Top Right Corner
+3 = Double Line Bottom Right Corner
+4 = Double Line Bottom Left Corner
+
+5 = Double Line Flat wall Left / Right
+6 = Double Line Flat wall Top / Bottom
+
+11 = Single Line Top Left Corner
+12 = Single Line Top Right Corner
+13 = Single Line Bottom Right Corner
+14 = Single Line Bottom Left Corner
+
+15 = Double Line Flat wall Left / Right
+16 = Double Line Flat wall Top / Bottom
+
+17 = Single Line Full Left
+18 = Single Line Full Right

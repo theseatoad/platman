@@ -1,24 +1,45 @@
+use std::fs;
+
 use bevy::prelude::*;
 
-use super::{wall::WallBundle};
+use super::wall::WallBundle;
 
 pub struct MapPlugin;
 
+pub const MAPWIDTH: f32 = 35.;
+pub const TILESIZE: f32 = 25.;
+pub const XOFFSET: f32 = -430.;
+pub const YOFFSET: f32 = -362.;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup_map);
     }
 }
 
+fn setup_map(mut commands: Commands) {
+    let map_string = fs::read_to_string("assets/maps/map1.txt").expect("Could not read map");
 
-fn setup_map(mut commands: Commands){
-    //Left wall
-    commands.spawn_bundle(WallBundle::new(Vec3{x: -450., y: 0., z: 0.1}, Vec2 { x: 25., y: 700. }));
-    //Right wall
-    commands.spawn_bundle(WallBundle::new(Vec3{x: 450., y: 0., z: 0.1}, Vec2 { x: 25., y: 700. }));
-    //Bottom Wall
-    commands.spawn_bundle(WallBundle::new(Vec3{x: 0., y: -350., z: 0.1}, Vec2 { x: 925., y: 25. }));
-    //Top Wall
-    commands.spawn_bundle(WallBundle::new(Vec3{x: 0., y: 350., z: 0.1}, Vec2 { x: 925., y: 25. }));
-
+    let mut x = 0.;
+    let mut y = 0.;
+    for mut tile in map_string.split(",") {
+        tile = tile.trim_matches('\n');
+        if !tile.is_empty() {
+            match tile {
+                "1" => {
+                    commands.spawn_bundle(WallBundle::new(Vec3 {
+                        x: (x * TILESIZE) + XOFFSET,
+                        y: (y * TILESIZE) + YOFFSET,
+                        z: 0.1,
+                    }));
+                }
+                _ => { /* Nothing */ }
+            }
+            if x == MAPWIDTH - 1. {
+                x = 0.;
+                y += 1.;
+            } else {
+                x += 1.
+            }
+        }
+    }
 }
