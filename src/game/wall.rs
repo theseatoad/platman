@@ -26,7 +26,7 @@ impl WallBundle {
                     ..default()
                 },
                 sprite: Sprite {
-                    color: Color::rgb(0.2, 0.2, 0.2),
+                    color: Color::rgb(115./255., 23./255., 45./255.),
                     ..default()
                 },
                 ..default()

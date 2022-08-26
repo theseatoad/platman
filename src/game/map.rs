@@ -2,7 +2,9 @@ use std::fs;
 
 use bevy::prelude::*;
 
-use super::wall::WallBundle;
+use crate::types::GameState;
+
+use super::{wall::WallBundle, player::OnlyInGame};
 
 pub struct MapPlugin;
 
@@ -12,7 +14,7 @@ pub const XOFFSET: f32 = -430.;
 pub const YOFFSET: f32 = -362.;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_map);
+        app.add_system_set(SystemSet::on_enter(GameState::InGame).with_system(setup_map));
     }
 }
 
@@ -30,7 +32,7 @@ fn setup_map(mut commands: Commands) {
                         x: (x * TILESIZE) + XOFFSET,
                         y: (y * TILESIZE) + YOFFSET,
                         z: 0.1,
-                    }));
+                    })).insert(OnlyInGame);
                 }
                 _ => { /* Nothing */ }
             }

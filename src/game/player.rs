@@ -1,3 +1,5 @@
+use crate::types::GameState;
+
 use super::components::{
     Collider, EntityName, Grounded, Player, PlayerInput, Velocity, Wall,
 };
@@ -17,17 +19,19 @@ struct JumpHeld {
 }
 pub struct PlayerPlugin;
 
+#[derive(Component, Default, Clone)]
+pub struct OnlyInGame;
+
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_player)
-            .add_system(player_input)
-            .add_system(
-                check_collisions
-                    .after(player_input))
-            .add_system(
-                move_player
-                    .after(check_collisions));
+        app.add_system_set(SystemSet::on_enter(GameState::InGame).with_system(setup_player))
+            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(player_input))
+            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(check_collisions_with_wall).after(player_input))
+            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(move_player).after(check_collisions_with_wall))
+            .add_system_set(SystemSet::on_update(GameState::InGame).with_system(outofbounds))
+            .add_system_set(SystemSet::on_exit(GameState::InGame).with_system(cleanup));
     }
+    
 }
 
 #[derive(Bundle)]
@@ -76,7 +80,8 @@ impl PlayerBundle {
 fn setup_player(mut commands: Commands) {
     commands
         .spawn_bundle(PlayerBundle::new(Vec2 { x: -15., y: -300. }))
-        .insert(EntityName("Player".to_string()));
+        .insert(EntityName("Player".to_string()))
+        .insert(OnlyInGame);
 }
 
 fn move_player(
@@ -134,7 +139,7 @@ fn player_input(
     }
 }
 
-fn check_collisions(
+fn check_collisions_with_wall(
     mut player_query: Query<(&mut PlayerInput, &mut Grounded, &mut Transform, &mut Velocity), With<Player>>,
     collider_query: Query<(Entity, &Transform, Option<&Wall>, Without<Player>), With<Collider>>,
 ) {
@@ -181,5 +186,18 @@ fn check_collisions(
         
     } else {
         player_grounded.0 = false;
+    }
+}
+
+fn outofbounds(query: Query<&Transform, With<Player>>,mut game_state: ResMut<State<GameState>>){
+    let player_transform = query.single();
+    if player_transform.translation.y < -450. {
+        game_state.set(GameState::GameOver).unwrap();
+    }
+}
+
+fn cleanup(mut commands: Commands, query: Query<Entity, With<OnlyInGame>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
     }
 }
