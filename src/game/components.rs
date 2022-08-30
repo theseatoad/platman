@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*};
 
 #[derive(Component, Default, Clone)]
 pub struct Player;
@@ -26,3 +26,4 @@ pub struct Jump(pub f32);
 
 #[derive(Component)]
 pub struct PlayerInput(pub Vec2);
+

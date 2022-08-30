@@ -9,7 +9,7 @@ pub struct WallBundle {
 }
 
 impl WallBundle {
-    pub fn new(location: Vec3) -> WallBundle {
+    pub fn new(location: Vec3, wall_color: Color, wall_scale: Vec3) -> WallBundle {
         WallBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
@@ -18,15 +18,11 @@ impl WallBundle {
                         y: location.y,
                         z: location.z,
                     },
-                    scale: Vec3 {
-                        x: 25.,
-                        y: 25.,
-                        z: 1.,
-                    },
+                    scale: wall_scale,
                     ..default()
                 },
                 sprite: Sprite {
-                    color: Color::rgb(115./255., 23./255., 45./255.),
+                    color: wall_color,
                     ..default()
                 },
                 ..default()
