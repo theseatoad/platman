@@ -6,3 +6,6 @@ AD for left right
 Space to jump
 
 Enter to play game
+
+
+![screen-gif](./platman.gif)
